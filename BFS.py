@@ -87,12 +87,16 @@ class BFS:
         return datos_nuevos
 
     def draw_images(self):
-        for C,M,C1,M1,B in self.explored: #cannivales, monjes, bote
+        self.view = []
+        for i,j in self.explored:
+            self.view.append(i)
+            self.view.append(j)
+        for C,M,B in self.view: #cannivales, monjes, bote
             state='--------()'
             if B=='left':
                 state = "()--------"
            #  
-            print(C*'C',M*'M',state,C1*'C',M1*'M')
+            print(C*'C',M*'M',state,abs(C-3)*'C',abs(M-3)*'M')
 
 # lol = BFS()
 # print(lol.generate_possible_paths((2,2,'right')))
@@ -101,7 +105,7 @@ lol = BFS()
 print(lol.frontier)
 lol.activity()
 print(lol.explored)
-# lol.draw_images()
+lol.draw_images()
 
 # lol = [1,2,3,4,5,1,2,3,4]
 # uff = [2,3,4,5]
