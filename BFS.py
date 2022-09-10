@@ -19,12 +19,12 @@ class BFS:
         # while not ((self.accomplished_goal[0] in self.explored) or (self.accomplished_goal[1] in self.explored)):
         
         while self.no_reached_goal:
-            print('este es el nuevo explorer')
+            # print('este es el nuevo explorer')
             new_to_explore = self.frontier[0] ## nuevo a explorar [[(3,3,'left'),[(3,2,'left')]]]+
-            print(new_to_explore)
+            # print(new_to_explore)
             self.paths_possible(boat_state=new_to_explore[-1],current_state=new_to_explore)
-            print('frontier',self.frontier)
-            print('explore',self.explored)
+            # print('frontier',self.frontier)
+            # print('explore',self.explored)
         
             if len(self.explored) ==0 : ### estado inicial
                 self.explored.append([self.frontier[0],self.frontier[1]])
@@ -62,6 +62,9 @@ class BFS:
         ### la segunda condición es para que no se repita el dato ni en frontier ni explorer
         ### la tercera condición es para que el dato de canivales siempre sea menor que o igual para que continue
         #new_dato not in self.explored
+
+            # print('lista de totales que se repiten',list(filter(lambda x:new_dato in x,self.explored)))
+
             if (not (new_dato[0]<min or new_dato[1]<min or new_dato[0]>max or new_dato[1]>max))\
                 and (new_dato not in self.frontier and (len(list(filter(lambda x: new_dato in x,self.explored))))==0) \
                 and (new_dato[0]<=new_dato[1]):
@@ -95,8 +98,9 @@ class BFS:
             state='--------()'
             if B=='left':
                 state = "()--------"
-           #  
-            print(C*'C',M*'M',state,abs(C-3)*'C',abs(M-3)*'M')
+           #
+            info = (C,M,abs(C-3),abs(M-3))
+            print(C*'C',M*'M',state,abs(C-3)*'C',abs(M-3)*'M',info)
 
 # lol = BFS()
 # print(lol.generate_possible_paths((2,2,'right')))
@@ -104,7 +108,7 @@ class BFS:
 lol = BFS()
 print(lol.frontier)
 lol.activity()
-print(lol.explored)
+# print(lol.explored)
 lol.draw_images()
 
 # lol = [1,2,3,4,5,1,2,3,4]
