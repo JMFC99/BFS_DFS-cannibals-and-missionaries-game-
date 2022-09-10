@@ -33,7 +33,8 @@ class BFS:
                 new_explored[new_explored.index(0)] =self.explored[-1][new_explored.index(0)]
                 # verified_statement = len(list(filter(lambda x:(x[-1]!=new_to_explore[-1]) and (len(list(filter(lambda y:y in x[:2],new_to_explore[:2])))<1),last_explored))) #[3,3,'right']
 
-                if sum(new_to_explore[:2]) not in list(map(lambda x:sum(x[:2]),self.explored[-1])) and new_explored[-1]==new_explored[-1]:
+                if (sum(new_to_explore[:2]) not in list(map(lambda x:sum(x[:2]),self.explored[-1])) and new_to_explore[-1]==new_to_explore[-1])\
+                    and abs(sum(new_explored[0][:2]) - sum(new_explored[1][:2]))<=2:
                     self.explored.append(new_explored)
                 self.frontier=self.frontier[1:]
 
@@ -77,7 +78,8 @@ class BFS:
 
 
             if (not (new_dato[0]<min or new_dato[1]<min or new_dato[0]>max or new_dato[1]>max))\
-                and ((len(list(filter(lambda x: new_dato in x,self.explored))))==0) \
+                and ((len(list(filter(lambda x: new_dato in x,self.explored))))<1)\
+                and (new_dato not in self.frontier)\
                 and ((new_dato[0]<=new_dato[1] and new_dato[2]=='right') or ((new_dato[0]>=new_dato[1] and new_dato[2]=='left'))):
                 new_data.append(new_dato) ### te regresa el último dato encontrado
         
