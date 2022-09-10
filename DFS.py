@@ -148,9 +148,7 @@ class DFS:
 
             
             '''
-        print(self.frontier)
         self.frontier = self.frontier + new_data  ## se concatena lo del frontien con la nueva data generada
-        print(self.frontier)
         return  
 
 
