@@ -1,26 +1,49 @@
 class BFS:
-    def __init__(self):
-        self.states=['left','right']## se establece en un principio que cada tipo de estado tiene el primer
-        # elemento como izquierda y el segundo elemento derecha
-        self.frontier=[(3,3,'left')] ## initial statement 
-        self.explored=[] # inital statement
-        self.accomplished_goal= [(0,0,'right'),(0,0,'left')] ## esto es lo que se busca llegar
-        self.no_reached_goal = True ## se maneja un estado inicial que nos permite verificar si se llegó o no al objetivo
-        self.operations = [(2,0),(0,2),(1,1),(1,0),(0,1)] ### solo puede tener un maximo de suma de una o dos personas, 
-        # por lo que estos son los posibles estados que pueden suceder durante el viaje 
 
+    #funcion inicial
+    def __init__(self):
+        #states: el lado en el que se encuentra el bote
+        self.states=['left','right']
+        #frontier: estado inicial  
+        #frontier(# Caniables, # Misioneros, states)
+        self.frontier=[(3,3,'left')] 
+        #explored = lista de nodos explorados
+        self.explored=[] 
+        #accomplished_goal: estado meta al mover todos los misioneros y canibales del izquierdo ---> a derecho
+        #****Preguntar porque se mantienen ambos estados como meta*****
+        self.accomplished_goal= [(0,0,'right'),(0,0,'left')] 
+        #no_reached_goal: bandera de tipo boolean para verificar si se ha llegado al estado deseado 'accomplished_goal'
+        self.no_reached_goal = True 
+        #operations: lista de operacones permitidas donde solo permite 1 o 2 personas por viaje
+        #(2,0) 2 Canibales, 0 Misioneros
+        #(0,2) 0 Canibales, 2 Misioneros
+        #(1,1) 1 Canibal, 1 Misionero
+        #(1,0) 1 Canibal, 0 Misioneros
+        #(0,1) 0 Canibales, 1 Misionero
+        self.operations = [(2,0),(0,2),(1,1),(1,0),(0,1)] 
+
+    #Funcion 'activity' que hace una llamada recursiva mientras la meta definida por la funcion 'init' no se ha alcanzado.
     def activity(self):        
         while self.no_reached_goal:
-            new_to_explore = self.frontier[0] ## nuevo a explorar 
+            #variable 'new_to_explore' permite crear un nodo por explorar apartir del primer nodo definido en la lista 'frontier' (3,3,'left')
+            new_to_explore = self.frontier[0]
+            #funcion 'paths_possible' genera la siguiente transicion/accion y agrega un nuevo nodo a frontier
             self.paths_possible(boat_state=new_to_explore[-1],current_state=new_to_explore)
         
+            #'if' condicion para considerar el caso cuando no existe ningun nodo explorado
+            # 'else' condicion para explorar cuando ya existe al menos un nodo explorado
             if len(self.explored) ==0 : ### estado inicial
+                #agrega los nodos frontier[0] y frontier[1] a la lista de nodos explorados.
                 self.explored.append([self.frontier[0],self.frontier[1]])
                 self.frontier=self.frontier[2:] ## desplazar un elemento de la lista
             
             else:
+                #new_explored: genera una variable local para almacenar un nodo temporal para explorar
                 new_explored = [0,0] ### inicializar una variable exploración
+                #index_new_element obtiene la posicion del nodo actual (left, right)
                 index_new_element=self.states.index(new_to_explore[-1])     ### identificar la posición del arreglo ejemplo
+                #la variable 'new_explored' definida para guardas un nodo se le asigna el indice definido en index_new_element
+                #el valor del nodo 'new_explored' obtiene el valor de new_to_explored=self.frontier[0]
                 new_explored[index_new_element] = new_to_explore # se asigna 
                 '''
                 explicación de la linea de arriba
@@ -28,7 +51,7 @@ class BFS:
                 right o left, lo que se hace es colocar ese cambio en la posición del ejemplo en este caso
                 teniendo el resultado de [(3,3,left),(2,2,right)]
                 '''
-
+                
                 new_explored[new_explored.index(0)] =self.explored[-1][new_explored.index(0)]
                 '''
                 esta sección lo que hace el lugar restante se asigna el valor que no se cambió
@@ -36,9 +59,16 @@ class BFS:
                 --> [(3,3,left),(2,3,right)]
                 --> [(3,3,left),(2,2,right)]
                 '''
-                if (sum(new_to_explore[:2]) not in list(map(lambda x:sum(x[:2]),self.explored[-1])) \
-                    and new_to_explore[-1]==new_to_explore[-1])\
+
+                #Condicion para agregar un nodo a la lista de nodos explorado, siempre y cuando cumpla con las especificaciones
+                #   sum(new_to_explore[:2]) not in list(map(lambda x:sum(x[:2]),self.explored[-1]))
+                #   1. Verifica que el nodo explorado no se encuentre en los nodos de los explorados.
+                #
+                #   abs(sum(new_explored[0][:2]) - sum(new_explored[1][:2]))<=2
+                #   2. Verifica que se este transportando un máximo de dos personas
+                if (sum(new_to_explore[:2]) not in list(map(lambda x:sum(x[:2]),self.explored[-1]))) \
                     and abs(sum(new_explored[0][:2]) - sum(new_explored[1][:2]))<=2:
+                    
                     self.explored.append(new_explored)
                 
                 '''
@@ -93,9 +123,19 @@ class BFS:
 
         return print('Grafical Steps'.center(50,'-'))
 
+    #paths_possible(self, boat_state, current_state, max, min, new_explored)
+    #   self: use self for the first argument to instance methods
+    #   boat_state: es el estado actual del bote, derecha o izquierda 
+    #   current_state: es el estado actual en el que se encuentra el juego es decir la combinacion de #Misioneros, #Canibales, boat_state
+    #   max: maximo numero de personas en el bote
+    #   min: minimo numero de personas en el bote
+    #   new_explored: nuevo estado que se va a explorar partiendo del estado actual 'current_state'
+
     def paths_possible(self,boat_state,current_state,max=3,min=0,new_explored=None):
-        new_data=[] # creamos una lista para poder anexar todos los posibles nuevos casos
-        for C,M in self.operations: #Cannibals, Monjes 
+        # 'new_data' es una lista de posibles acciones que se pueden realizar a partir del estado actual
+        new_data=[]
+        # loop creado para generar los posibles movimientos/transiciones considerando el numero de canibales (C) y misioneros (M) del estado actual
+        for C,M in self.operations: #Cannibals, Misioneros
             '''
             las operaciones que realiza es restar/sumar los valores de las tuplas 
             delo asignado a self.operations:
